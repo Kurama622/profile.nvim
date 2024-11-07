@@ -51,7 +51,7 @@ local function default_options()
         comp:text_component("git@github.com:Kurama622/profile.nvim", "center", "ProfileRed"),
         comp:text_component("──── By Kurama622", "right", "ProfileBlue"),
       })
-      comp:seperator_render()
+      comp:separator_render()
       comp:card_component_render({
         type = "table",
         content = function()
@@ -72,7 +72,7 @@ Language Generation with LLM's API]],
           text = "ProfileYellow",
         },
       })
-      comp:seperator_render()
+      comp:separator_render()
       comp:git_contributions_render()
     end,
     obj = {

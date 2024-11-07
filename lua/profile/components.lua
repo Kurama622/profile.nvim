@@ -47,7 +47,7 @@ function comp:text_component(text, align, hl)
   }
 end
 
-function comp:seperator()
+function comp:separator()
   return {
     type = "sep",
     content = function()
@@ -56,8 +56,8 @@ function comp:seperator()
   }
 end
 
-function comp:seperator_render(tbl)
-  tbl = tbl or { comp:seperator() }
+function comp:separator_render(tbl)
+  tbl = tbl or { comp:separator() }
   comp:text_component_render(tbl)
 end
 

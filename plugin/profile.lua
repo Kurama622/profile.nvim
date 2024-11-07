@@ -2,14 +2,14 @@
 
 local g = vim.api.nvim_create_augroup("nvim-profile", { clear = true })
 
-local hightlight = {
+local highlight = {
   ProfileRed = { fg = "#ffc0cb", bg = "NONE" },
   ProfileBlue = { fg = "#B0E2FF", bg = "NONE" },
   Profilegreen = { fg = "#c1Eac1", bg = "NONE" },
   Profileyellow = { fg = "#ffe4c4", bg = "NONE" },
 }
 
-for k, v in pairs(hightlight) do
+for k, v in pairs(highlight) do
   vim.api.nvim_set_hl(0, k, v)
 end
 

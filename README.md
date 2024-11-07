@@ -88,7 +88,7 @@ You also can refer to my [config](https://github.com/Kurama622/.lazyvim/blob/mai
             comp:text_component("git@github.com:Kurama622/profile.nvim", "center", "ProfileRed"),
             comp:text_component("──── By Kurama622", "right", "ProfileBlue"),
           })
-          comp:seperator_render()
+          comp:separator_render()
 
           -- Custom card component, render git repository by default
           comp:card_component_render({
@@ -111,7 +111,7 @@ Language Generation with LLM's API]],
               text = "ProfileYellow",
             },
           })
-          comp:seperator_render()
+          comp:separator_render()
 
           -- git contributions, Considering network latency, the module will render asynchronously.
           -- you can also configure `fake_contributions`, so it won't fetch data from the Github

@@ -6,6 +6,11 @@ Your personal homepage in Neovim.
 ![profile2](https://github.com/user-attachments/assets/24f8d775-f484-47a1-a278-b011817db08b)
 
 
+Will it make your neovim startup slower? No! Your worries are unnecessary!
+
+![startup time](https://github.com/user-attachments/assets/121fd395-7631-4400-9ff0-351fc6f94786)
+
+
 ## Dependencies
 
 - ["3rd/image.nvim"](https://github.com/3rd/image.nvim) - see [image.nvim:Installation](https://github.com/3rd/image.nvim?tab=readme-ov-file#installation)

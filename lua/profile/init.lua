@@ -36,6 +36,7 @@ local function default_options()
       avatar_height = 20,
       avatar_x = math.floor((win_width - 20) / 2),
       avatar_y = 7,
+      force_blank = true,
     },
     user = "Kurama622",
     git_contributions = {

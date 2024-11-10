@@ -7,9 +7,11 @@ local function homepage_instance(opts)
   comp.opts = opts
   comp.OFFSET = OFFSET
   OFFSET.y = 1
-  local header_offset = opts.avatar_opts.avatar_height / 2 + opts.avatar_opts.avatar_y
-  for _ = 1, header_offset do
-    comp:text_component_render({ comp:separator() })
+  if opts.avatar_opts.force_blank then
+    local header_offset = opts.avatar_opts.avatar_height / 2 + opts.avatar_opts.avatar_y
+    for _ = 1, header_offset do
+      comp:text_component_render({ comp:separator() })
+    end
   end
   opts.format()
   --defer until next event loop

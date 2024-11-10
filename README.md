@@ -2,9 +2,10 @@
 
 Your personal homepage in Neovim.
 
-![profile1](https://github.com/user-attachments/assets/ec627c79-ebac-46f5-8728-57472836642a)
-![profile2](https://github.com/user-attachments/assets/24f8d775-f484-47a1-a278-b011817db08b)
-![profile3](https://github.com/user-attachments/assets/8987ecac-4e98-4aec-8f04-26f0ad598603)
+![profile-default](https://github.com/user-attachments/assets/ec627c79-ebac-46f5-8728-57472836642a)
+![profile-custom](https://github.com/user-attachments/assets/24f8d775-f484-47a1-a278-b011817db08b)
+![profile-ascii](https://github.com/user-attachments/assets/8987ecac-4e98-4aec-8f04-26f0ad598603)
+![profile-homepage](https://github.com/user-attachments/assets/7982ccbe-a745-45fe-929f-b6f3bdfdaa49)
 
 
 Will it make your neovim startup slower? No! Your worries are unnecessary!

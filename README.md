@@ -17,6 +17,8 @@ Will it make your neovim startup slower? No! Your worries are unnecessary!
 - ["3rd/image.nvim"](https://github.com/3rd/image.nvim) - see [image.nvim:Installation](https://github.com/3rd/image.nvim?tab=readme-ov-file#installation)
 - curl, jq
 
+- Github Token: [https://github.com/settings/tokens](https://github.com/settings/tokens)
+
 ## Installation
 
 - lazy.nvim

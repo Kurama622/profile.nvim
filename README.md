@@ -55,7 +55,7 @@ You also can refer to my [config](https://github.com/Kurama622/.lazyvim/blob/mai
           avatar_height = 20,
           avatar_x = math.floor((win_width - 20) / 2),
           avatar_y = 7,
-          force_blank = true,   -- if true, will create some blank lines (avatar_height)
+          force_blank = true,   -- if true, will create some blank lines (avatar_height + avatar_y)
         },
 
         -- git user

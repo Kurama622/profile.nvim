@@ -4,6 +4,7 @@ Your personal homepage in Neovim.
 
 ![profile1](https://github.com/user-attachments/assets/ec627c79-ebac-46f5-8728-57472836642a)
 ![profile2](https://github.com/user-attachments/assets/24f8d775-f484-47a1-a278-b011817db08b)
+![profile3](https://github.com/user-attachments/assets/8987ecac-4e98-4aec-8f04-26f0ad598603)
 
 
 Will it make your neovim startup slower? No! Your worries are unnecessary!
@@ -54,6 +55,7 @@ You also can refer to my [config](https://github.com/Kurama622/.lazyvim/blob/mai
           avatar_height = 20,
           avatar_x = math.floor((win_width - 20) / 2),
           avatar_y = 7,
+          force_blank = true,   -- if true, will create some blank lines (avatar_height)
         },
 
         -- git user

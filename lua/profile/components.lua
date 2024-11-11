@@ -85,28 +85,27 @@ local function async_get_git_contributions(opts, callback)
     gen_git_contribute_map(opts, contributions, contribute_map)
     pcall(callback, contribute_map)
   else
-    vim.fn.jobstart(
-      string.format(
-        [[curl -s -H "Authorization: bearer $GITHUB_TOKEN" -X POST -d '{"query":"query {user(login: \"%s\") {contributionsCollection {contributionCalendar {weeks {contributionDays {contributionCount\n date}}}}}}"}' https://api.github.com/graphql | jq '.data.user.contributionsCollection.contributionCalendar.weeks.[].contributionDays' | jq '{weeks: [.[].contributionCount]}' | jq -c -s 'reduce .[] as $item ({}; . + {(length + 1 | tostring): $item.weeks})']],
-        opts.user
-      ),
-      {
-        on_stdout = function(job_id, data, event_type)
-          vim.schedule(function()
-            local str = ""
-            for _, line in ipairs(data) do
-              str = str .. line
-            end
-            if str == "" or str == " " or str == "\n" then
-              return
-            end
-            local contributions = vim.json.decode(str)
-            gen_git_contribute_map(opts, contributions, contribute_map)
-            pcall(callback, contribute_map)
-          end)
-        end,
-      }
-    )
+    local cmd =
+      [[curl -s -H "Authorization: bearer $GITHUB_TOKEN" -X POST -d '{"query":"query {user(login: \"%s\") {contributionsCollection {contributionCalendar {weeks {contributionDays {contributionCount\n date}}}}}}"}' https://api.github.com/graphql | jq '.data.user.contributionsCollection.contributionCalendar.weeks.[].contributionDays' | jq '{weeks: [.[].contributionCount]}' | jq -c -s 'reduce .[] as $item ({}; . + {(length + 1 | tostring): $item.weeks})']]
+    if opts.git_contributions.non_official_api_cmd then
+      cmd = opts.git_contributions.non_official_api_cmd
+    end
+    vim.fn.jobstart(string.format(cmd, opts.user), {
+      on_stdout = function(job_id, data, event_type)
+        vim.schedule(function()
+          local str = ""
+          for _, line in ipairs(data) do
+            str = str .. line
+          end
+          if str == "" or str == " " or str == "\n" then
+            return
+          end
+          local contributions = vim.json.decode(str)
+          gen_git_contribute_map(opts, contributions, contribute_map)
+          pcall(callback, contribute_map)
+        end)
+      end,
+    })
   end
 end
 

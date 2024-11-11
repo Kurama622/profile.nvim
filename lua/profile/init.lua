@@ -45,6 +45,7 @@ local function default_options()
       empty_char = "□",
       full_char = { "■", "■", "■", "■", "■" },
       fake_contributions = nil,
+      non_official_api_cmd = nil,
     },
     format = function()
       comp:avatar()

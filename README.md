@@ -15,10 +15,12 @@ Will it make your neovim startup slower? No! Your worries are unnecessary!
 
 ## Dependencies
 
-- ["3rd/image.nvim"](https://github.com/3rd/image.nvim) - see [image.nvim:Installation](https://github.com/3rd/image.nvim?tab=readme-ov-file#installation)
-- curl, jq
+- ["3rd/image.nvim"](https://github.com/3rd/image.nvim) - see [image.nvim:Installation](https://github.com/3rd/image.nvim?tab=readme-ov-file#installation) \[optional, dependency of displaying images\]
 
-- Github Token: [https://github.com/settings/tokens](https://github.com/settings/tokens)
+
+- curl, jq \[optional, dependency of git contributions\]
+
+- Github Token: [https://github.com/settings/tokens](https://github.com/settings/tokens) \[optional, If you use a third-party API to fetch git contributions, then you don't need a Github Token. \]
 
 ## Installation
 

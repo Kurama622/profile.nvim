@@ -86,7 +86,8 @@ local function async_get_git_contributions(opts, callback)
     pcall(callback, contribute_map)
   else
     local cmd =
-      [[curl -s -H "Authorization: bearer $GITHUB_TOKEN" -X POST -d '{"query":"query {user(login: \"%s\") {contributionsCollection {contributionCalendar {weeks {contributionDays {contributionCount\n date}}}}}}"}' https://api.github.com/graphql | jq '.data.user.contributionsCollection.contributionCalendar.weeks.[].contributionDays' | jq '{weeks: [.[].contributionCount]}' | jq -c -s 'reduce .[] as $item ({}; . + {(length + 1 | tostring): $item.weeks})']]
+      [[curl -s -H "Authorization: bearer $GITHUB_TOKEN" -X POST -d '{"query":"query {user(login: \"%s\") {contributionsCollection {contributionCalendar {weeks {contributionDays {contributionCount}}}}}}"}' https://api.github.com/graphql | \
+jq -c 'reduce (.data.user.contributionsCollection.contributionCalendar.weeks | to_entries[]) as $week ({}; .[$week.key + 1 | tostring] = [$week.value.contributionDays[].contributionCount])']]
     if opts.git_contributions.non_official_api_cmd then
       cmd = opts.git_contributions.non_official_api_cmd
     end

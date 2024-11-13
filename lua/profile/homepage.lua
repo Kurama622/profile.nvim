@@ -1,9 +1,13 @@
 local comp = require("profile.components")
+local utils = require("profile.utils")
 local api = vim.api
 
 ---@private
 local function homepage_instance(opts)
   local OFFSET = {}
+  if opts.disable_move then
+    utils.disable_move_key(opts.bufnr)
+  end
   comp.opts = opts
   comp.OFFSET = OFFSET
   OFFSET.y = 1
@@ -21,6 +25,10 @@ local function homepage_instance(opts)
       modeline = false,
     })
   end)
+
+  if opts.cursor_pos and type(opts.cursor_pos) == "table" then
+    vim.api.nvim_win_set_cursor(opts.winid, opts.cursor_pos)
+  end
 end
 
 return setmetatable({}, {

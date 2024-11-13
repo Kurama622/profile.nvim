@@ -15,12 +15,12 @@ Will it make your neovim startup slower? No! Your worries are unnecessary!
 
 ## Dependencies
 
-- ["3rd/image.nvim"](https://github.com/3rd/image.nvim) - see [image.nvim:Installation](https://github.com/3rd/image.nvim?tab=readme-ov-file#installation) \[optional, dependency of displaying images\]
+- ["3rd/image.nvim"](https://github.com/3rd/image.nvim) - see [image.nvim:Installation](https://github.com/3rd/image.nvim?tab=readme-ov-file#installation).   **\[optional, dependency of displaying images\]**
 
 
-- curl, jq \[optional, dependency of git contributions\]
+- curl, jq.  **\[optional, dependency of git contributions\]**
 
-- Github Token: [https://github.com/settings/tokens](https://github.com/settings/tokens) \[optional, If you use a third-party API to fetch git contributions, then you don't need a Github Token. \]
+- Github Token: [https://github.com/settings/tokens](https://github.com/settings/tokens) **\[optional, If you use a third-party API to fetch git contributions, then you don't need a Github Token. \]**
 
 ## Installation
 
@@ -85,6 +85,9 @@ You also can refer to my [config](https://github.com/Kurama622/.lazyvim/blob/mai
             return ret
           end,
           ]]
+
+          -- if you want to use a third-party API to fetch git contributions
+          -- non_official_api_cmd = [[ curl -s "https://github-contributions-api.jogruber.de/v4/%s?y=$(date -d "1 year ago" +%%Y)&y=$(date +%%Y)" | jq '.contributions' | jq --arg start $(date -d "1 year ago" +%%Y-%%m-%%d) --arg end $(date +%%Y-%%m-%%d) '.[] | select((.date >= $start) and (.date <= $end))' | jq -s 'sort_by(.date) | map(.count) | . as $array | reduce range(0; length; 7) as $i ({}; . + {($i/7+1 | tostring): $array[$i:$i+7]})' ]],
         },
         hide = {
           statusline = true,

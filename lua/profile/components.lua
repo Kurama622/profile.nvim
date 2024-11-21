@@ -1,15 +1,41 @@
 local utils = require("profile.utils")
 local api = vim.api
 local comp = {}
+
 function comp:avatar()
   local img = require("image")
+  local avatar_x = nil
+  local avatar_y = nil
+  local avatar_width = nil
+  local avatar_height = nil
+  if type(self.opts.avatar_opts.avatar_x) == "number" then
+    avatar_x = self.opts.avatar_opts.avatar_x
+  elseif type(self.opts.avatar_opts.avatar_x) == "function" then
+    avatar_x = self.opts.avatar_opts.avatar_x()
+  end
+  if type(self.opts.avatar_opts.avatar_y) == "number" then
+    avatar_y = self.opts.avatar_opts.avatar_y
+  elseif type(self.opts.avatar_opts.avatar_y) == "function" then
+    avatar_y = self.opts.avatar_opts.avatar_y()
+  end
+  if type(self.opts.avatar_opts.avatar_width) == "number" then
+    avatar_width = self.opts.avatar_opts.avatar_width
+  elseif type(self.opts.avatar_opts.avatar_width) == "function" then
+    avatar_width = self.opts.avatar_opts.avatar_width()
+  end
+  if type(self.opts.avatar_opts.avatar_height) == "number" then
+    avatar_height = self.opts.avatar_opts.avatar_height
+  elseif type(self.opts.avatar_opts.avatar_height) == "function" then
+    avatar_height = self.opts.avatar_opts.avatar_height()
+  end
+
   self.opts.obj.avatar = img.from_file(self.opts.avatar_path, {
     id = "avatar",
     inline = true,
-    x = self.opts.avatar_opts.avatar_x,
-    y = self.opts.avatar_opts.avatar_y,
-    width = self.opts.avatar_opts.avatar_width,
-    height = self.opts.avatar_opts.avatar_height,
+    x = avatar_x,
+    y = avatar_y,
+    width = avatar_width,
+    height = avatar_height,
   })
 end
 
@@ -306,38 +332,58 @@ function comp:card_component_render(cards)
         -1
       )
 
-      vim.api.nvim_buf_add_highlight(
-        self.opts.bufnr,
-        -1,
-        cards.hl.border,
-        self.OFFSET.y + (i - 1) * card_height + idx,
-        border_char_pos[i][1] + offset_x[i],
-        border_char_pos[i][1] + border_char_width + offset_x[i]
-      )
-      vim.api.nvim_buf_add_highlight(
-        self.opts.bufnr,
-        -1,
-        cards.hl.border,
-        self.OFFSET.y + (i - 1) * card_height + idx,
-        border_char_pos[i][2] + offset_x[i],
-        border_char_pos[i][2] + border_char_width + offset_x[i]
-      )
-      vim.api.nvim_buf_add_highlight(
-        self.opts.bufnr,
-        -1,
-        cards.hl.border,
-        self.OFFSET.y + (i - 1) * card_height + idx,
-        border_char_pos[i][3] + offset_x[i],
-        border_char_pos[i][3] + border_char_width + offset_x[i]
-      )
-      vim.api.nvim_buf_add_highlight(
-        self.opts.bufnr,
-        -1,
-        cards.hl.border,
-        self.OFFSET.y + (i - 1) * card_height + idx,
-        border_char_pos[i][4] + offset_x[i],
-        border_char_pos[i][4] + border_char_width + offset_x[i]
-      )
+      if
+        border_char_pos[i][1] + offset_x[i] > 0
+        and border_char_pos[i][1] + border_char_width + offset_x[i] < vim.o.columns
+      then
+        vim.api.nvim_buf_add_highlight(
+          self.opts.bufnr,
+          -1,
+          cards.hl.border,
+          self.OFFSET.y + (i - 1) * card_height + idx,
+          border_char_pos[i][1] + offset_x[i],
+          border_char_pos[i][1] + border_char_width + offset_x[i]
+        )
+      end
+      if
+        border_char_pos[i][2] + offset_x[i] > 0
+        and border_char_pos[i][2] + border_char_width + offset_x[i] < vim.o.columns
+      then
+        vim.api.nvim_buf_add_highlight(
+          self.opts.bufnr,
+          -1,
+          cards.hl.border,
+          self.OFFSET.y + (i - 1) * card_height + idx,
+          border_char_pos[i][2] + offset_x[i],
+          border_char_pos[i][2] + border_char_width + offset_x[i]
+        )
+      end
+      if
+        border_char_pos[i][3] + offset_x[i] > 0
+        and border_char_pos[i][3] + border_char_width + offset_x[i] < vim.o.columns
+      then
+        vim.api.nvim_buf_add_highlight(
+          self.opts.bufnr,
+          -1,
+          cards.hl.border,
+          self.OFFSET.y + (i - 1) * card_height + idx,
+          border_char_pos[i][3] + offset_x[i],
+          border_char_pos[i][3] + border_char_width + offset_x[i]
+        )
+      end
+      if
+        border_char_pos[i][4] + offset_x[i] > 0
+        and border_char_pos[i][4] + border_char_width + offset_x[i] < vim.o.columns
+      then
+        vim.api.nvim_buf_add_highlight(
+          self.opts.bufnr,
+          -1,
+          cards.hl.border,
+          self.OFFSET.y + (i - 1) * card_height + idx,
+          border_char_pos[i][4] + offset_x[i],
+          border_char_pos[i][4] + border_char_width + offset_x[i]
+        )
+      end
     end
     vim.api.nvim_buf_add_highlight(self.opts.bufnr, -1, cards.hl.border, self.OFFSET.y + (i - 1) * card_height, 0, -1)
     vim.api.nvim_buf_add_highlight(

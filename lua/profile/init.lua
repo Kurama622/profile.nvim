@@ -159,18 +159,29 @@ function pf:restore_user_options(opts)
   end
 end
 
+function pf:clear(opts)
+  clean_avatar(opts.obj.avatar)
+  vim.bo[self.bufnr].modifiable = true
+  vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, false, {})
+end
+
 function pf:render(opts)
+  require("profile.homepage")(opts)
+  self:set_ui_options(opts)
+  vim.bo[self.bufnr].modifiable = false
+end
+
+function pf:init(opts)
   opts.bufnr = self.bufnr
   opts.winid = self.winid
-  require("profile.homepage")(opts)
 
-  self:set_ui_options(opts)
+  self:render(opts)
 
   api.nvim_create_autocmd("VimResized", {
     buffer = self.bufnr,
     callback = function()
-      require("profile.homepage")(opts)
-      vim.bo[self.bufnr].modifiable = false
+      self:clear(opts)
+      self:render(opts)
     end,
   })
 
@@ -240,7 +251,7 @@ function pf:instance()
 
   buf_local()
   if self.opts then
-    self:render(self.opts)
+    self:init(self.opts)
   end
 end
 

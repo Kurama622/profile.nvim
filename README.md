@@ -90,6 +90,9 @@ You also can refer to my [config](https://github.com/Kurama622/.lazyvim/blob/mai
 
           -- if you want to use a third-party API to fetch git contributions
           -- non_official_api_cmd = [[ curl -s "https://github-contributions-api.jogruber.de/v4/%s?y=$(date -d "1 year ago" +%%Y)&y=$(date +%%Y)" | jq '.contributions' | jq --arg start $(date -d "1 year ago" +%%Y-%%m-%%d) --arg end $(date +%%Y-%%m-%%d) '.[] | select((.date >= $start) and (.date <= $end))' | jq -s 'sort_by(.date) | map(.count) | . as $array | reduce range(0; length; 7) as $i ({}; . + {($i/7+1 | tostring): $array[$i:$i+7]})' ]],
+          
+          -- if you want to cache the results of the call. Expects the time in seconds
+          -- cache_time = 60 * 60 * 24,
         },
         hide = {
           statusline = true,

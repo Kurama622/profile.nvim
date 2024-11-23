@@ -77,4 +77,21 @@ function utils.buf_is_empty(bufnr)
   return vim.api.nvim_buf_line_count(0) == 1 and vim.api.nvim_buf_get_lines(0, 0, -1, false)[1] == ""
 end
 
+function utils.cache_file_name(username)
+  return string.format("github-contributions-%s.json", username)
+end
+
+function utils.get_file_modification_time(filename)
+  return require('lfs').attributes(filename, 'modification')
+end
+
+function utils.is_file_stale(filename, relative_time)
+  local modification_time, err = utils.get_file_modification_time(filename)
+  if err then
+    return true
+  end
+
+  return os.time() - modification_time  > relative_time
+end
+
 return utils

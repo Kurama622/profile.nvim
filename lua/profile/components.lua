@@ -110,30 +110,57 @@ local function async_get_git_contributions(opts, callback)
     local contributions = opts.git_contributions.fake_contributions()
     gen_git_contribute_map(opts, contributions, contribute_map)
     pcall(callback, contribute_map)
-  else
-    local cmd =
-      [[curl -s -H "Authorization: bearer $GITHUB_TOKEN" -X POST -d '{"query":"query {user(login: \"%s\") {contributionsCollection {contributionCalendar {weeks {contributionDays {contributionCount}}}}}}"}' https://api.github.com/graphql | \
-jq -c 'reduce (.data.user.contributionsCollection.contributionCalendar.weeks | to_entries[]) as $week ({}; .[$week.key + 1 | tostring] = [$week.value.contributionDays[].contributionCount])']]
-    if opts.git_contributions.non_official_api_cmd then
-      cmd = opts.git_contributions.non_official_api_cmd
-    end
-    vim.fn.jobstart(string.format(cmd, opts.user), {
-      on_stdout = function(job_id, data, event_type)
-        vim.schedule(function()
-          local str = ""
-          for _, line in ipairs(data) do
-            str = str .. line
-          end
-          if str == "" or str == " " or str == "\n" then
-            return
-          end
-          local contributions = vim.json.decode(str)
-          gen_git_contribute_map(opts, contributions, contribute_map)
-          pcall(callback, contribute_map)
-        end)
-      end,
-    })
+    return
   end
+
+  local raw_cmd = opts.git_contributions.non_official_api_cmd or [[curl -s -H "Authorization: bearer $GITHUB_TOKEN" -X POST -d '{"query":"query {user(login: \"%s\") {contributionsCollection {contributionCalendar {weeks {contributionDays {contributionCount}}}}}}"}' https://api.github.com/graphql | \
+jq -c 'reduce (.data.user.contributionsCollection.contributionCalendar.weeks | to_entries[]) as $week ({}; .[$week.key + 1 | tostring] = [$week.value.contributionDays[].contributionCount])']]
+
+  local cache_file = utils.cache_file_name(opts.user)
+
+  local function async_fill_git_contributions(data)
+    vim.schedule(function()
+      local str = ""
+      for _, line in ipairs(data) do
+        str = str .. line
+      end
+      if str == "" or str == " " or str == "\n" then
+        return
+      end
+      local contributions = vim.json.decode(str)
+
+      if opts.git_contributions.cache_time then
+        require('lfs').touch(cache_file)
+        local file = io.open(cache_file, "w")
+        -- We might not been able to create the file via the 'touch' method so we nil checking file
+        if file then
+          file:write(contributions)
+          file:close()
+        end
+      end
+
+      gen_git_contribute_map(opts, contributions, contribute_map)
+      pcall(callback, contribute_map)
+    end)
+  end
+
+  if opts.git_contributions.cache_time
+    and not utils.is_file_stale(cache_file, opts.git_contributions.cache_time) then
+    local file = io.open(cache_file)
+    if file then
+      local data = file:read("a")
+      file:close()
+
+      async_fill_git_contributions(data)
+      return
+    end
+  end
+
+  vim.fn.jobstart(string.format(raw_cmd, opts.user), {
+    on_stdout = function(job_id, data, event_type)
+      async_fill_git_contributions(data)
+    end,
+  })
 end
 
 function comp:git_contributions_render(hl)

@@ -20,6 +20,8 @@ Will it make your neovim startup slower? No! Your worries are unnecessary!
 
 - curl, jq.  **\[optional, dependency of git contributions\]**
 
+- LuaFileSystem - see [installation](https://lunarmodules.github.io/luafilesystem/manual.html#installation). **\[optional, dependency of caching git contributions\]**
+
 - Github Token: [https://github.com/settings/tokens](https://github.com/settings/tokens) **\[optional, If you use a third-party API to fetch git contributions, then you don't need a Github Token. \]**
 
 ## Installation

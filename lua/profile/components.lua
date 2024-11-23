@@ -134,7 +134,7 @@ jq -c 'reduce (.data.user.contributionsCollection.contributionCalendar.weeks | t
         local file = io.open(cache_file, "w")
         -- We might not been able to create the file via the 'touch' method so we nil checking file
         if file then
-          file:write(contributions)
+          file:write(str)
           file:close()
         end
       end

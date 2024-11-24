@@ -47,8 +47,7 @@ function utils.element_align(tbl)
   return res
 end
 
-function utils.disable_move_key(bufnr)
-  local keys = { "w", "f", "b", "h", "j", "k", "l", "<Up>", "<Down>", "<Left>", "<Right>" }
+function utils.disable_move_key(bufnr, keys)
   vim.tbl_map(function(k)
     vim.keymap.set("n", k, "<Nop>", { buffer = bufnr })
   end, keys)

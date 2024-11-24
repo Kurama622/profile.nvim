@@ -30,7 +30,7 @@ end
 local function default_options()
   local win_width = vim.o.columns
   return {
-    disable_move = false,
+    disable_keys = nil,
     cursor_pos = nil,
     avatar_path = plugin_path() .. "/../../resources/profile.png",
     avatar_opts = {

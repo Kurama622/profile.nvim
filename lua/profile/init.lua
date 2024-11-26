@@ -48,7 +48,9 @@ local function default_options()
       full_char = { "■", "■", "■", "■", "■" },
       fake_contributions = nil,
       non_official_api_cmd = nil,
+
       cache_time = nil,
+      cache_folder = plugin_path() .. "/../../cache",
     },
     format = function()
       comp:avatar()

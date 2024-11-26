@@ -116,7 +116,7 @@ local function async_get_git_contributions(opts, callback)
   local raw_cmd = opts.git_contributions.non_official_api_cmd or [[curl -s -H "Authorization: bearer $GITHUB_TOKEN" -X POST -d '{"query":"query {user(login: \"%s\") {contributionsCollection {contributionCalendar {weeks {contributionDays {contributionCount}}}}}}"}' https://api.github.com/graphql | \
 jq -c 'reduce (.data.user.contributionsCollection.contributionCalendar.weeks | to_entries[]) as $week ({}; .[$week.key + 1 | tostring] = [$week.value.contributionDays[].contributionCount])']]
 
-  local cache_file = utils.cache_file_name(opts.user)
+  local cache_file_path = utils.cache_file_path(opts.git_contributions.cache_folder, opts.user)
 
   local function async_fill_git_contributions(data)
     vim.schedule(function()
@@ -129,10 +129,9 @@ jq -c 'reduce (.data.user.contributionsCollection.contributionCalendar.weeks | t
       end
       local contributions = vim.json.decode(str)
 
-      if opts.git_contributions.cache_time then
-        require('lfs').touch(cache_file)
-        local file = io.open(cache_file, "w")
-        -- We might not been able to create the file via the 'touch' method so we nil checking file
+      if opts.git_contributions.cache_time ~= nil then
+        local file, err = io.open(cache_file_path, "w")
+        -- We might not been able to create the file so we nil checking file
         if file then
           file:write(str)
           file:close()
@@ -144,10 +143,11 @@ jq -c 'reduce (.data.user.contributionsCollection.contributionCalendar.weeks | t
     end)
   end
 
-  if opts.git_contributions.cache_time
-    and not utils.is_file_stale(cache_file, opts.git_contributions.cache_time) then
-    local file = io.open(cache_file)
+  if opts.git_contributions.cache_time ~= nil
+    and not utils.is_file_stale(cache_file_path, opts.git_contributions.cache_time) then
+    local file = io.open(cache_file_path)
     if file then
+
       local data = file:read("a")
       file:close()
 

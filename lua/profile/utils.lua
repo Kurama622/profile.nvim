@@ -78,7 +78,7 @@ function utils.buf_is_empty(bufnr)
 end
 
 function utils.cache_file_name(username)
-  return string.format("github-contributionss-%s.json", username)
+  return string.format("github-contributions-%s.json", username)
 end
 
 function utils.cache_file_path(cache_path, username)

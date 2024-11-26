@@ -93,6 +93,9 @@ You also can refer to my [config](https://github.com/Kurama622/.lazyvim/blob/mai
           
           -- if you want to cache the results of the call. Expects the time in seconds
           -- cache_time = 60 * 60 * 24,
+
+          -- if you want to change the cache folder (must have read/write permissions)
+          -- cache_folder = "~/my/custom/cache/folder",
         },
         hide = {
           statusline = true,

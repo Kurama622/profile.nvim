@@ -151,7 +151,7 @@ jq -c 'reduce (.data.user.contributionsCollection.contributionCalendar.weeks | t
       local data = file:read("a")
       file:close()
 
-      async_fill_git_contributions(data)
+      async_fill_git_contributions({ data })
       return
     end
   end

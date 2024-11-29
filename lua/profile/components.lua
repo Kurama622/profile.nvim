@@ -152,11 +152,7 @@ jq -c 'reduce (.data.user.contributionsCollection.contributionCalendar.weeks | t
 
   vim.fn.jobstart(string.format(raw_cmd, opts.user), {
     on_stdout = function(job_id, data, event_type)
-      local str = ""
-      for _, line in ipairs(data) do
-        str = str .. line
-      end
-      async_fill_git_contributions(str)
+      async_fill_git_contributions(table.concat(data, ""))
     end,
   })
 end

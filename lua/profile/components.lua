@@ -140,7 +140,7 @@ jq -c 'reduce (.data.user.contributionsCollection.contributionCalendar.weeks | t
   end
 
   if should_use_cache and not is_cache_stale then
-    local file, err = io.open(cache_file_path)
+    local file = io.open(cache_file_path)
     if file then
       local data = file:read("a")
       file:close()

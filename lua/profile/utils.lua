@@ -109,8 +109,7 @@ function utils.save_cache_modification_timings(cache_path, new_timings)
 end
 
 function utils.is_file_stale(cache_path, filename, relative_time)
-  local modification_time = utils.get_cache_modification_timings(cache_path)[filename]
-  if modification_time == nil then return nil end
+  local modification_time = utils.get_cache_modification_timings(cache_path)[filename] or 0
 
   return (os.time() - modification_time) > relative_time
 end

@@ -81,21 +81,52 @@ function utils.cache_file_name(username)
   return string.format("github-contributions-%s.json", username)
 end
 
-function utils.cache_file_path(cache_path, username)
-  return cache_path .. "/" .. utils.cache_file_name(name)
-end
+function utils.get_cache_modification_timings(cache_path)
+  local file = io.open(cache_path .. "/.modification_timings")
+  if file == nil then return {} end
+  local raw_timings = file:read("a")
+  file:close()
 
-function utils.get_file_modification_time(filename)
-  return require('lfs').attributes(filename, 'modification')
-end
-
-function utils.is_file_stale(filename, relative_time)
-  local modification_time, err = utils.get_file_modification_time(filename)
-  if err then
-    return true
+  local timings = {}
+  for filename, time in string.gmatch(raw_timings, "(.+%.json):(%d+)") do
+    timings[filename] = tonumber(time)
   end
 
-  return (os.time() - modification_time)  > relative_time
+  return timings
+end
+
+function utils.save_cache_modification_timings(cache_path, new_timings)
+  local raw_timings = {}
+
+  for filename, modification_time in pairs(new_timings) do
+    raw_timings[#raw_timings+1] = filename .. ":" .. modification_time
+  end
+
+  local file = io.open(cache_path .. "/.modification_timings", "w")
+  if file == nil then return end
+  file:write(table.concat(raw_timings, "\n"))
+  file:close()
+end
+
+function utils.get_file_modification_time(cache_path, filename)
+  return utils.get_cache_modification_timings(cache_path)[filename] or 0
+end
+
+function utils.is_file_stale(cache_path, filename, relative_time)
+  local modification_time = utils.get_file_modification_time(cache_path, filename)
+  return (os.time() - modification_time) > relative_time
+end
+
+function utils.update_cache(cache_path, filename, data)
+  local modification_timings = utils.get_cache_modification_timings(cache_path)
+  modification_timings[filename] = os.time()
+  utils.save_cache_modification_timings(cache_path, modification_timings)
+
+  local file = io.open(cache_path .. "/" .. filename, "w")
+  if file == nil then return end
+
+  file:write(data)
+  file:close()
 end
 
 return utils

@@ -116,26 +116,22 @@ local function async_get_git_contributions(opts, callback)
   local raw_cmd = opts.git_contributions.non_official_api_cmd or [[curl -s -H "Authorization: bearer $GITHUB_TOKEN" -X POST -d '{"query":"query {user(login: \"%s\") {contributionsCollection {contributionCalendar {weeks {contributionDays {contributionCount}}}}}}"}' https://api.github.com/graphql | \
 jq -c 'reduce (.data.user.contributionsCollection.contributionCalendar.weeks | to_entries[]) as $week ({}; .[$week.key + 1 | tostring] = [$week.value.contributionDays[].contributionCount])']]
 
-  local cache_file_path = utils.cache_file_path(opts.git_contributions.cache_folder, opts.user)
+
+  local cache_file_name = utils.cache_file_name(opts.user)
+  local cache_file_path = opts.git_contributions.cache_folder .. "/" .. cache_file_name
+  local is_cache_stale = utils.is_file_stale(opts.git_contributions.cache_folder, cache_file_name, opts.git_contributions.cache_time or 0)
+  local should_use_cache = opts.git_contributions.cache_time ~= nil
 
   local function async_fill_git_contributions(data)
     vim.schedule(function()
-      local str = ""
-      for _, line in ipairs(data) do
-        str = str .. line
-      end
-      if str == "" or str == " " or str == "\n" then
+      if data == "" or data == " " or data == "\n" then
         return
       end
-      local contributions = vim.json.decode(str)
 
-      if opts.git_contributions.cache_time ~= nil then
-        local file, err = io.open(cache_file_path, "w")
-        -- We might not been able to create the file so we nil checking file
-        if file then
-          file:write(str)
-          file:close()
-        end
+      local contributions = vim.json.decode(data)
+
+      if should_use_cache and is_cache_stale then
+        utils.update_cache(opts.git_contributions.cache_folder, cache_file_name, data)
       end
 
       gen_git_contribute_map(opts, contributions, contribute_map)
@@ -143,22 +139,24 @@ jq -c 'reduce (.data.user.contributionsCollection.contributionCalendar.weeks | t
     end)
   end
 
-  if opts.git_contributions.cache_time ~= nil
-    and not utils.is_file_stale(cache_file_path, opts.git_contributions.cache_time) then
-    local file = io.open(cache_file_path)
+  if should_use_cache and not is_cache_stale then
+    local file, err = io.open(cache_file_path)
     if file then
-
       local data = file:read("a")
       file:close()
 
-      async_fill_git_contributions({ data })
+      async_fill_git_contributions(data)
       return
     end
   end
 
   vim.fn.jobstart(string.format(raw_cmd, opts.user), {
     on_stdout = function(job_id, data, event_type)
-      async_fill_git_contributions(data)
+      local str = ""
+      for _, line in ipairs(data) do
+        str = str .. line
+      end
+      async_fill_git_contributions(str)
     end,
   })
 end

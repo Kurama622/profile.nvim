@@ -5,8 +5,8 @@ local api = vim.api
 ---@private
 local function homepage_instance(opts)
   local OFFSET = {}
-  if opts.disable_move then
-    utils.disable_move_key(opts.bufnr)
+  if type(opts.disable_keys) == "table" then
+    utils.disable_move_key(opts.bufnr, opts.disable_keys)
   end
   comp.opts = opts
   comp.OFFSET = OFFSET

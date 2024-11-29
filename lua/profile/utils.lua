@@ -108,12 +108,10 @@ function utils.save_cache_modification_timings(cache_path, new_timings)
   file:close()
 end
 
-function utils.get_file_modification_time(cache_path, filename)
-  return utils.get_cache_modification_timings(cache_path)[filename] or 0
-end
-
 function utils.is_file_stale(cache_path, filename, relative_time)
-  local modification_time = utils.get_file_modification_time(cache_path, filename)
+  local modification_time = utils.get_cache_modification_timings(cache_path)[filename]
+  if modification_time == nil then return nil end
+
   return (os.time() - modification_time) > relative_time
 end
 

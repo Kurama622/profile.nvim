@@ -17,7 +17,6 @@ Will it make your neovim startup slower? No! Your worries are unnecessary!
 
 - ["3rd/image.nvim"](https://github.com/3rd/image.nvim) - see [image.nvim:Installation](https://github.com/3rd/image.nvim?tab=readme-ov-file#installation).   **\[optional, dependency of displaying images\]**
 
-
 - curl, jq.  **\[optional, dependency of git contributions\]**
 
 - Github Token: [https://github.com/settings/tokens](https://github.com/settings/tokens) **\[optional, If you use a third-party API to fetch git contributions, then you don't need a Github Token. \]**
@@ -71,6 +70,9 @@ You also can refer to my [config](https://github.com/Kurama622/.lazyvim/blob/mai
           empty_char = " ",
           full_char = { "", "󰧞", "", "", "" },
           fake_contributions = nil,
+          cache_path = "/tmp/profile.nvim/", -- Cache the data of git contributions locally.
+          cache_duration = 24 * 60 * 60, -- seconds, The cache validity period is 1 day.
+
           --[[
           -- If you want to fake git's contribution information,
           -- you can pass a function to fake_contributions.

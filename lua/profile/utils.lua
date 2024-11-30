@@ -76,4 +76,20 @@ function utils.buf_is_empty(bufnr)
   return vim.api.nvim_buf_line_count(0) == 1 and vim.api.nvim_buf_get_lines(0, 0, -1, false)[1] == ""
 end
 
+function utils.path_exists(p)
+  local stat = vim.loop.fs_stat(p)
+  return stat ~= nil
+end
+
+function utils.create_path(p)
+  if utils.path_exists(p) then
+    return true
+  end
+  local ok, err = uv.fs_mkdir(p, 511)
+  if not ok and err ~= "EEXIST" then
+    print("create path failed: " .. err)
+    return false
+  end
+  return true
+end
 return utils

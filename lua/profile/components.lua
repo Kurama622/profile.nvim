@@ -1,5 +1,6 @@
 local utils = require("profile.utils")
 local api = vim.api
+local uv = vim.loop
 local comp = {}
 
 function comp:avatar()
@@ -87,7 +88,60 @@ function comp:separator_render(tbl)
   comp:text_component_render(tbl)
 end
 
+-- git_contributions
+local function get_the_cache_file_in_path(p, user)
+  local name = string.format("%s_profile_cache", user)
+  return string.format("%s/%s", p, name)
+end
+
+local function check_file_valid(file_path, max_time_diff)
+  local stat = uv.fs_stat(file_path)
+  if stat then
+    local mtime = stat.mtime.sec
+    return os.difftime(os.time(), mtime) < max_time_diff
+  else
+    return false
+  end
+end
+
+local function cache_git_contributions(opts, str)
+  utils.create_path(opts.git_contributions.cache_path)
+  local cache_file = string.format("%s/%s_profile_cache", opts.git_contributions.cache_path, opts.user)
+
+  local file = io.open(cache_file, "w")
+  if file then
+    file:write(str)
+    file:close()
+  else
+    print("write failed: " .. cache_file)
+  end
+end
+
+local function load_git_contributions_from_cache(opts)
+  local cache_file = string.format("%s/%s_profile_cache", opts.git_contributions.cache_path, opts.user)
+
+  local file = io.open(cache_file, "r")
+  local content = nil
+  local s = nil
+  if file then
+    content = file:read("*all")
+    file:close()
+  else
+    print("read faild: " .. cache_file)
+  end
+  s, content = pcall(vim.json.decode, content)
+  if not s then
+    print(s)
+    return nil
+  end
+  return content
+end
+
 local function gen_git_contribute_map(opts, contributions, contribute_map)
+  if contributions == nil then
+    print("please pass in the correct contributions.")
+    return
+  end
   for row = 1, 7 do
     contribute_map[row] = ""
     for col = opts.git_contributions.start_week, opts.git_contributions.end_week do
@@ -111,28 +165,49 @@ local function async_get_git_contributions(opts, callback)
     gen_git_contribute_map(opts, contributions, contribute_map)
     pcall(callback, contribute_map)
   else
-    local cmd =
-      [[curl -s -H "Authorization: bearer $GITHUB_TOKEN" -X POST -d '{"query":"query {user(login: \"%s\") {contributionsCollection {contributionCalendar {weeks {contributionDays {contributionCount}}}}}}"}' https://api.github.com/graphql | \
-jq -c 'reduce (.data.user.contributionsCollection.contributionCalendar.weeks | to_entries[]) as $week ({}; .[$week.key + 1 | tostring] = [$week.value.contributionDays[].contributionCount])']]
-    if opts.git_contributions.non_official_api_cmd then
-      cmd = opts.git_contributions.non_official_api_cmd
+    local enable_cache = opts.git_contributions.cache_path ~= nil and true or false
+
+    local cache_file = nil
+    if enable_cache then
+      cache_file = get_the_cache_file_in_path(opts.git_contributions.cache_path, opts.user)
     end
-    vim.fn.jobstart(string.format(cmd, opts.user), {
-      on_stdout = function(job_id, data, event_type)
-        vim.schedule(function()
-          local str = ""
-          for _, line in ipairs(data) do
-            str = str .. line
-          end
-          if str == "" or str == " " or str == "\n" then
-            return
-          end
-          local contributions = vim.json.decode(str)
-          gen_git_contribute_map(opts, contributions, contribute_map)
-          pcall(callback, contribute_map)
-        end)
-      end,
-    })
+
+    local enable_load_cache = false
+    if cache_file then
+      enable_load_cache = check_file_valid(cache_file, opts.git_contributions.cache_duration)
+    end
+
+    if enable_load_cache then
+      local contributions = load_git_contributions_from_cache(opts)
+      gen_git_contribute_map(opts, contributions, contribute_map)
+      pcall(callback, contribute_map)
+    else
+      local cmd =
+        [[curl -s -H "Authorization: bearer $GITHUB_TOKEN" -X POST -d '{"query":"query {user(login: \"%s\") {contributionsCollection {contributionCalendar {weeks {contributionDays {contributionCount}}}}}}"}' https://api.github.com/graphql | \
+jq -c 'reduce (.data.user.contributionsCollection.contributionCalendar.weeks | to_entries[]) as $week ({}; .[$week.key + 1 | tostring] = [$week.value.contributionDays[].contributionCount])']]
+      if opts.git_contributions.non_official_api_cmd then
+        cmd = opts.git_contributions.non_official_api_cmd
+      end
+      vim.fn.jobstart(string.format(cmd, opts.user), {
+        on_stdout = function(job_id, data, event_type)
+          vim.schedule(function()
+            local str = ""
+            for _, line in ipairs(data) do
+              str = str .. line
+            end
+            if str == "" or str == " " or str == "\n" then
+              return
+            end
+            local contributions = vim.json.decode(str)
+            if enable_cache then
+              cache_git_contributions(opts, str)
+            end
+            gen_git_contribute_map(opts, contributions, contribute_map)
+            pcall(callback, contribute_map)
+          end)
+        end,
+      })
+    end
   end
 end
 

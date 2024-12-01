@@ -48,6 +48,8 @@ local function default_options()
       full_char = { "■", "■", "■", "■", "■" },
       fake_contributions = nil,
       non_official_api_cmd = nil,
+      cache_path = "/tmp/profile.nvim/",
+      cache_duration = 24 * 60 * 60, -- seconds
     },
     format = function()
       comp:avatar()

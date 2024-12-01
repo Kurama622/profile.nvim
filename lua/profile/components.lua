@@ -90,22 +90,8 @@ end
 
 -- git_contributions
 local function get_the_cache_file_in_path(p, user)
-  local file = nil
-  local handle = uv.fs_scandir(p)
-  if not handle then
-    return file
-  end
-
-  while true do
-    local name, type = uv.fs_scandir_next(handle)
-    if not name then
-      break
-    end
-    if type == "file" and name == string.format("%s_profile_cache", user) then
-      file = string.format("%s/%s", p, name)
-    end
-  end
-  return file
+  local name = string.format("%s_profile_cache", user)
+  return string.format("%s/%s", p, name)
 end
 
 local function check_file_valid(file_path, max_time_diff)

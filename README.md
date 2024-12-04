@@ -1,6 +1,17 @@
 # profile.nvim
 
-Your personal homepage in Neovim.
+<!-- mtoc-start -->
+
+* [Dependencies](#dependencies)
+* [Installation](#installation)
+  * [image.nvim configuration](#imagenvim-configuration)
+* [Define User Mappings](#define-user-mappings)
+* [Some Unicode characters you might be interested in](#some-unicode-characters-you-might-be-interested-in)
+* [References](#references)
+
+<!-- mtoc-end -->
+
+Your personal homepage.
 
 ![profile-default](https://github.com/user-attachments/assets/ec627c79-ebac-46f5-8728-57472836642a)
 ![profile-custom](https://github.com/user-attachments/assets/24f8d775-f484-47a1-a278-b011817db08b)
@@ -97,6 +108,9 @@ You also can refer to my [config](https://github.com/Kurama622/.lazyvim/blob/mai
           statusline = true,
           tabline = true,
         },
+
+        disable_keys = { "h", "j", "k", "<Left>", "<Right>", "<Up>", "<Down>", "<C-f>" }, -- disable some mappings. (You can use it to disable cursor movement)
+        cursor_pos = { 0, 0 },  -- set cursor position
 
         -- Customize the content to render
         format = function()
@@ -213,7 +227,7 @@ vim.api.nvim_create_autocmd("FileType", {
 Refer to my [config](https://github.com/Kurama622/.lazyvim/blob/main/lua/plugins/profile.lua).
 
 
-## Some Unicode characters you might be interested in:
+## Some Unicode characters you might be interested in
 
 ```lua
 --[[

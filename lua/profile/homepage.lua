@@ -27,7 +27,7 @@ local function homepage_instance(opts)
   end)
 
   if opts.cursor_pos and type(opts.cursor_pos) == "table" then
-    vim.api.nvim_win_set_cursor(opts.winid, opts.cursor_pos)
+    pcall(vim.api.nvim_win_set_cursor, opts.winid, opts.cursor_pos)
   end
 end
 

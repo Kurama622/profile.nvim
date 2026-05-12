@@ -1,5 +1,7 @@
 # profile.nvim
 
+[My Another Dashboard Plugin](https://github.com/Kurama622/dashboard-github.nvim)
+
 <!-- mtoc-start -->
 
 * [Dependencies](#dependencies)
